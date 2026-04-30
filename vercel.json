@@ -1,7 +1,8 @@
 {
-  "functions": {
-    "api/index.js": {
-      "runtime": "edge"
-    }
-  }
+  "version": 2,
+  "name": "vercel-study-project",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/api/index" }
+  ],
+  "trailingSlash": false
 }

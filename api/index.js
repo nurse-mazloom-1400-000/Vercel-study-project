@@ -1,1 +1,62 @@
-const _0x2c327f=_0x262b;(function(_0x568dff,_0x51cfec){const _0x56485f=_0x262b,_0x2048f2=_0x568dff();while(!![]){try{const _0xdb9063=-parseInt(_0x56485f(0x1cc))/0x1*(parseInt(_0x56485f(0x1ab))/0x2)+-parseInt(_0x56485f(0x1b5))/0x3*(parseInt(_0x56485f(0x1b4))/0x4)+-parseInt(_0x56485f(0x1c5))/0x5+-parseInt(_0x56485f(0x1cb))/0x6+parseInt(_0x56485f(0x1cf))/0x7+parseInt(_0x56485f(0x1b0))/0x8*(parseInt(_0x56485f(0x1bf))/0x9)+-parseInt(_0x56485f(0x1d0))/0xa*(-parseInt(_0x56485f(0x1c4))/0xb);if(_0xdb9063===_0x51cfec)break;else _0x2048f2['push'](_0x2048f2['shift']());}catch(_0x44cb77){_0x2048f2['push'](_0x2048f2['shift']());}}}(_0x2bd4,0xc03ae));export const config={'runtime':'edge'};function _0x2bd4(){const _0x502d4d=['3351zAEsCK','proxy-authenticate','Bad\x20Gateway:\x20Tunnel\x20Failed','upgrade','HEAD','connection','x-forwarded-host','headers','manual','startsWith','2943ADBhfc','x-forwarded-proto','GET','replace','transfer-encoding','748wkzBuo','4504220YWfOKc','url','half','host','indexOf','slice','8818770PBpVEW','1AlsDIL','set','proxy-authorization','8929816hCquQF','439700kgvNox','2613822xFhJSc','x-forwarded-for','relay\x20error:','x-real-ip','keep-alive','22392qNDPgi','method','Misconfigured:\x20TARGET_DOMAIN\x20is\x20not\x20set','x-vercel-','2564ByLYZK'];_0x2bd4=function(){return _0x502d4d;};return _0x2bd4();}function _0x262b(_0x528e88,_0x3a2464){_0x528e88=_0x528e88-0x1ab;const _0x2bd417=_0x2bd4();let _0x262b84=_0x2bd417[_0x528e88];return _0x262b84;}const TARGET_BASE=(process.env.TARGET_DOMAIN||'')[_0x2c327f(0x1c2)](/\/$/,''),STRIP_HEADERS=new Set([_0x2c327f(0x1c8),_0x2c327f(0x1ba),_0x2c327f(0x1af),_0x2c327f(0x1b6),_0x2c327f(0x1ce),'te','trailer',_0x2c327f(0x1c3),_0x2c327f(0x1b8),'forwarded',_0x2c327f(0x1bb),_0x2c327f(0x1c0),'x-forwarded-port']);export default async function handler(_0x4ea8f9){const _0x4a8538=_0x2c327f;if(!TARGET_BASE)return new Response(_0x4a8538(0x1b2),{'status':0x1f4});try{const _0x2cb55f=_0x4ea8f9[_0x4a8538(0x1c6)][_0x4a8538(0x1c9)]('/',0x8),_0x1e0a89=_0x2cb55f===-0x1?TARGET_BASE+'/':TARGET_BASE+_0x4ea8f9[_0x4a8538(0x1c6)][_0x4a8538(0x1ca)](_0x2cb55f),_0x16364d=new Headers();let _0x690396=null;for(const [_0x555994,_0x46f6d5]of _0x4ea8f9[_0x4a8538(0x1bc)]){if(STRIP_HEADERS['has'](_0x555994))continue;if(_0x555994[_0x4a8538(0x1be)](_0x4a8538(0x1b3)))continue;if(_0x555994===_0x4a8538(0x1ae)){_0x690396=_0x46f6d5;continue;}if(_0x555994===_0x4a8538(0x1ac)){if(!_0x690396)_0x690396=_0x46f6d5;continue;}_0x16364d['set'](_0x555994,_0x46f6d5);}if(_0x690396)_0x16364d[_0x4a8538(0x1cd)](_0x4a8538(0x1ac),_0x690396);const _0x555bbb=_0x4ea8f9[_0x4a8538(0x1b1)],_0x3a1f4f=_0x555bbb!==_0x4a8538(0x1c1)&&_0x555bbb!==_0x4a8538(0x1b9);return await fetch(_0x1e0a89,{'method':_0x555bbb,'headers':_0x16364d,'body':_0x3a1f4f?_0x4ea8f9['body']:undefined,'duplex':_0x4a8538(0x1c7),'redirect':_0x4a8538(0x1bd)});}catch(_0x24823c){return console['error'](_0x4a8538(0x1ad),_0x24823c),new Response(_0x4a8538(0x1b7),{'status':0x1f6});}}
+export const config = { runtime: "edge" };
+
+const TARGET_BASE = (process.env.TARGET_DOMAIN || "").replace(/\/$/, "");
+
+const STRIP_HEADERS = new Set([
+  "host",
+  "connection",
+  "keep-alive",
+  "proxy-authenticate",
+  "proxy-authorization",
+  "te",
+  "trailer",
+  "transfer-encoding",
+  "upgrade",
+  "forwarded",
+  "x-forwarded-host",
+  "x-forwarded-proto",
+  "x-forwarded-port",
+]);
+
+export default async function handler(req) {
+  if (!TARGET_BASE) {
+    return new Response("Misconfigured: TARGET_DOMAIN is not set", { status: 500 });
+  }
+
+  try {
+    const pathStart = req.url.indexOf("/", 8);
+    const targetUrl =
+      pathStart === -1 ? TARGET_BASE + "/" : TARGET_BASE + req.url.slice(pathStart);
+
+    const out = new Headers();
+    let clientIp = null;
+    for (const [k, v] of req.headers) {
+      if (STRIP_HEADERS.has(k)) continue;
+      if (k.startsWith("x-vercel-")) continue;
+      if (k === "x-real-ip") {
+        clientIp = v;
+        continue;
+      }
+      if (k === "x-forwarded-for") {
+        if (!clientIp) clientIp = v;
+        continue;
+      }
+      out.set(k, v);
+    }
+    if (clientIp) out.set("x-forwarded-for", clientIp);
+
+    const method = req.method;
+    const hasBody = method !== "GET" && method !== "HEAD";
+
+    return await fetch(targetUrl, {
+      method,
+      headers: out,
+      body: hasBody ? req.body : undefined,
+      duplex: "half",
+      redirect: "manual",
+    });
+  } catch (err) {
+    console.error("relay error:", err);
+    return new Response("Bad Gateway: Tunnel Failed", { status: 502 });
+  }
+}
